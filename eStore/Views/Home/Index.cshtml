@@ -1,0 +1,19 @@
+﻿@model AdminAccount
+@{
+    ViewData["Title"] = "LoginPage";
+}
+
+<div class="text-center text-info text-capitalize">
+    <h1 class="display-4">Welcome to eStore!</h1>
+</div>
+<h3 class="text-center text-danger">@ViewBag.Message</h3>
+<br />
+<div class="d-flex justify-content-center">
+    <form asp-action="Login">
+        User name: @Html.TextBoxFor(a => a.Username)
+        <br />
+        Password: @Html.TextBoxFor(a => a.Password)
+        <br />
+        <input type="submit" value="Login" class="btn btn-info" />
+    </form>
+</div>

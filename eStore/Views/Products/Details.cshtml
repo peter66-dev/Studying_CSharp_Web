@@ -1,0 +1,54 @@
+﻿@model DataAccess.Product
+
+@{
+    ViewData["Title"] = "Details page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center text-capitalize text-info"> Product details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Product ID
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductId)
+        </dd>
+        <dt class="col-sm-2">
+            Category ID
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CategoryId)
+        </dd>
+        <dt class="col-sm-2">
+            Product Name
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductName)
+        </dd>
+        <dt class="col-sm-2">
+            Weight
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Weight)
+        </dd>
+        <dt class="col-sm-2">
+            Unit Price
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UnitPrice) (VND)
+        </dd>
+        <dt class="col-sm-2">
+            Quantity
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UnitsInStock)
+        </dd>
+    </dl>
+</div>
+<div class="text-center">
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ProductId }) |
+    <a asp-action="Index">Back to List</a>
+</div>

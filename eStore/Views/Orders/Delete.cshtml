@@ -1,0 +1,56 @@
+﻿@model DataAccess.Order
+
+@{
+    ViewData["Title"] = "Delete page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center text-capitalize text-info">Delete an order</h1>
+
+<h3>Are you sure you want to delete this order?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Order ID
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OrderId)
+        </dd>
+        <dt class="col-sm-2">
+            Member ID
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MemberId)
+        </dd>
+        <dt class="col-sm-2">
+            Order Date
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OrderDate)
+        </dd>
+        <dt class="col-sm-2">
+            Required Date
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequiredDate)
+        </dd>
+        <dt class="col-sm-2">
+            Shipped Date
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ShippedDate)
+        </dd>
+        <dt class="col-sm-2">
+            Freight
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Freight) (VND)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
