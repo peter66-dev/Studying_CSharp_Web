@@ -1,0 +1,51 @@
+﻿@model IEnumerable<DataAccess.OrderDetail>
+
+@{
+    ViewData["Title"] = "Customer History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center text-info">HISTORY ORDERS</h1>
+<p class="text-danger">Total: <span>@ViewBag.Total</span> VND</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-center">
+                Order ID
+            </th>
+            <th class="text-center">
+                Product ID
+            </th>
+            <th class="text-center">
+                Unit Price (VND)
+            </th>
+            <th class="text-center">
+                Quantity Buy
+            </th>
+            <th class="text-center">
+                Discount (%)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.OrderId)
+            </td>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.ProductId)
+            </td>
+            <td class="text-right">
+                @Html.DisplayFor(modelItem => item.UnitPrice)
+            </td>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.Discount)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

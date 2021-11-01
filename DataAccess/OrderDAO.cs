@@ -126,5 +126,110 @@ namespace DataAccess
                 throw new Exception(ex.Message);
             }
         }
+
+        public decimal? GetTotalMoney(List<Order> list)
+        {
+            decimal? total = 0;
+            try
+            {
+                var context = new FStoreContext();
+                List<OrderDetail> tmp = new List<OrderDetail>();
+                foreach (var order in list)
+                {
+                    total += order.Freight;
+                    tmp = context.OrderDetails.Where(o => o.OrderId == order.OrderId).ToList();
+                }
+                if (tmp.Count != 0)
+                {
+                    foreach (var o in tmp)
+                    {
+                        total += ((decimal)(1 - o.Discount) * o.UnitPrice * o.Quantity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return total;
+        }
+
+        public IEnumerable<Order> GetStatistic(int start, int end)
+        {
+            List<Order> list = new List<Order>();
+            try
+            {
+                using (var context = new FStoreContext())
+                {
+                    list = context.Orders.Where(o => start <= o.OrderDate.Day && o.OrderDate.Day <= end).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return list;
+        }
+
+        public IEnumerable<Order> SortAsc()
+        {
+            List<Order> list = new List<Order>();
+            try
+            {
+                using (var context = new FStoreContext())
+                {
+                    list = context.Orders.OrderBy(o => o.OrderDate).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return list;
+        }
+
+        public IEnumerable<Order> SortDesc()
+        {
+            List<Order> list = new List<Order>();
+            try
+            {
+                using (var context = new FStoreContext())
+                {
+                    list = context.Orders.OrderByDescending(o => o.OrderDate).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return list;
+        }
+
+        public decimal GetTotalByMemberId(int id)
+        {
+            decimal total = 0;
+            try
+            {
+                var context = new FStoreContext();
+                List<Order> oList = context.Orders.Where(o => o.MemberId == id).ToList();
+                foreach (var o in oList)
+                {
+                    foreach (var od in context.OrderDetails)
+                    {
+                        if (o.OrderId == od.OrderId)
+                        {
+                            total += od.Quantity * od.UnitPrice * (decimal)(1 - od.Discount);
+                        }
+                    }
+                }
+            
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return total;
+        }
+
     }
 }

@@ -14,5 +14,9 @@ namespace DataAccess
         void InsertProduct(Product pro);
         void DeleteProduct(int id);
         void UpdateProduct(Product pro);
+        public IEnumerable<Product> Sortasc();
+        public IEnumerable<Product> Sortdesc();
+        public List<Product> GetProductByName(string name);
+        public List<Product> GetProductByPrice(int option);
     }
 }

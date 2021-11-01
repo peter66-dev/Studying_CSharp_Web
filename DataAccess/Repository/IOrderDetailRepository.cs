@@ -13,5 +13,6 @@ namespace DataAccess
         void InsertOrderDetail(OrderDetail o);
         void DeleteOrderDetail(int id, int proId);
         void UpdateOrderDetail(OrderDetail o);
+        public List<OrderDetail> GetOrderDetailByMemberID(int memID);
     }
 }

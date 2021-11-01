@@ -10,38 +10,78 @@ namespace eStore.Controllers
 {
     public class OrderDetailsController : Controller
     {
-        public bool IsLogin { get; set; } = false;
+
         IOrderDetailRepository ordRepository = null;
         public OrderDetailsController() => ordRepository = new OrderDetailRepository();
         // GET: OrderDetailsController
         public ActionResult Index()
         {
-            var oList = ordRepository.GetOrderDetails();
-            return View(oList);
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
+            else
+            {
+                var oList = ordRepository.GetOrderDetails();
+                return View(oList);
+            }
+        }
+
+        public ActionResult CustomerHistory(int id)
+        {
+            if (HttpContext.Session.GetString("admin") == null && HttpContext.Session.GetString("user") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
+            else
+            {
+                var oList = ordRepository.GetOrderDetailByMemberID(id);
+                decimal total = 0;
+                foreach (var o in oList)
+                {
+                    total += (decimal)(1 - o.Discount) * o.Quantity * o.UnitPrice;
+                }
+                ViewData["Total"] = Math.Round(total,2);
+                return View("CustomerHistory", oList);
+            }
         }
 
         // GET: OrderDetailsController/Details/5
         public ActionResult Details(int? id, int proID)
         {
-            if (id == null)
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                return NotFound();
+                return RedirectToAction("Privacy", "Home");
             }
             else
             {
-                var o = ordRepository.GetOrderDetailByID(id.Value, proID);
-                if (o == null)
+                if (id == null)
                 {
                     return NotFound();
                 }
-                return View(o);
+                else
+                {
+                    var o = ordRepository.GetOrderDetailByID(id.Value, proID);
+                    if (o == null)
+                    {
+                        return NotFound();
+                    }
+                    return View(o);
+                }
             }
         }
 
         // GET: OrderDetailsController/Create
         public ActionResult Create()
         {
-            return View();
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
+            else
+            {
+                return View();
+            }
         }
 
         // POST: OrderDetailsController/Create
@@ -49,36 +89,50 @@ namespace eStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(OrderDetail o)
         {
-            try
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                if (ModelState.IsValid)
-                {
-                    ordRepository.InsertOrderDetail(o);
-                }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Privacy", "Home");
             }
-            catch (Exception ex)
+            else
             {
-                ViewBag.Message = "Sorry, this order detail id has existed in list!" + ex.Message;
-                return View(o);
+                try
+                {
+                    if (ModelState.IsValid)
+                    {
+                        ordRepository.InsertOrderDetail(o);
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = "Sorry, this order detail id has existed in list!" + ex.Message;
+                    return View(o);
+                }
             }
         }
 
         // GET: OrderDetailsController/Edit/5
         public ActionResult Edit(int? id, int proID)
         {
-            if (id == null)
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                return NotFound();
+                return RedirectToAction("Privacy", "Home");
             }
             else
             {
-                var o = ordRepository.GetOrderDetailByID(id.Value, proID);
-                if (o == null)
+                if (id == null)
                 {
                     return NotFound();
                 }
-                return View(o);
+                else
+                {
+                    var o = ordRepository.GetOrderDetailByID(id.Value, proID);
+                    if (o == null)
+                    {
+                        return NotFound();
+                    }
+                    return View(o);
+                }
             }
         }
 
@@ -87,38 +141,52 @@ namespace eStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, OrderDetail o)
         {
-            try
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                if (id != o.OrderId)
-                {
-                    return NotFound();
-                }
-                if (ModelState.IsValid)
-                {
-                    ordRepository.UpdateOrderDetail(o);
-                }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Privacy", "Home");
             }
-            catch (Exception ex)
+            else
             {
-                ViewBag.Message = ex.Message;
-                return View();
+                try
+                {
+                    if (id != o.OrderId)
+                    {
+                        return NotFound();
+                    }
+                    if (ModelState.IsValid)
+                    {
+                        ordRepository.UpdateOrderDetail(o);
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = ex.Message;
+                    return View();
+                }
             }
         }
 
         // GET: OrderDetailsController/Delete/5
         public ActionResult Delete(int? id, int proID)
         {
-            if (id == null)
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                return NotFound();
+                return RedirectToAction("Privacy", "Home");
             }
-            var o = ordRepository.GetOrderDetailByID(id.Value, proID);
-            if (o == null)
+            else
             {
-                return NotFound();
+                if (id == null)
+                {
+                    return NotFound();
+                }
+                var o = ordRepository.GetOrderDetailByID(id.Value, proID);
+                if (o == null)
+                {
+                    return NotFound();
+                }
+                return View(o);
             }
-            return View(o);
         }
 
         // POST: OrderDetailsController/Delete/5
@@ -126,15 +194,22 @@ namespace eStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, int proID)
         {
-            try
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                ordRepository.GetOrderDetailByID(id, proID);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Privacy", "Home");
             }
-            catch (Exception ex)
+            else
             {
-                ViewBag.Message = ex.Message;
-                return View();
+                try
+                {
+                    ordRepository.GetOrderDetailByID(id, proID);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = ex.Message;
+                    return View();
+                }
             }
         }
     }

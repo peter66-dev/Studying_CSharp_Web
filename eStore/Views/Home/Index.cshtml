@@ -1,6 +1,6 @@
 ﻿@model AdminAccount
 @{
-    ViewData["Title"] = "LoginPage";
+    ViewData["Title"] = "Login Page";
 }
 
 <div class="text-center text-info text-capitalize">
@@ -9,11 +9,31 @@
 <h3 class="text-center text-danger">@ViewBag.Message</h3>
 <br />
 <div class="d-flex justify-content-center">
-    <form asp-action="Login">
-        User name: @Html.TextBoxFor(a => a.Username)
-        <br />
-        Password: @Html.TextBoxFor(a => a.Password)
-        <br />
-        <input type="submit" value="Login" class="btn btn-info" />
+    <form asp-action="Login" asp-controller="Home">
+        <div class="mb-3 row">
+            <div class="col-sm-3">
+                <label class="col-form-label">Email</label>
+            </div>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" name="username">
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="col-sm-3">
+                <label class="col-form-label">Password</label>
+            </div>
+            <div class="col-sm-9">
+                <input type="password" class="form-control" name="password">
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="col-sm-6">
+                <input type="submit" value="Login" class="btn btn-info" />
+            </div>
+            <div class="col-sm-6">
+                <input type="reset" value="Reset" class="btn btn-primary" />
+            </div>
+        </div>
     </form>
 </div>
+

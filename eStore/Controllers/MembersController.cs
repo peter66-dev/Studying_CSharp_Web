@@ -10,12 +10,15 @@ namespace eStore.Controllers
 {
     public class MembersController : Controller
     {
-        public bool IsLogin { get; set; } = false;
-        IMemberRepository memRepository = null;
+        IMemberRepository memRepository = null; 
         public MembersController() => memRepository = new MemberRepository();
         // GET: MembersController
         public ActionResult Index()
         {
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
             var memList = memRepository.GetMembers();
             return View(memList);
         }
@@ -23,24 +26,59 @@ namespace eStore.Controllers
         // GET: MembersController/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null)
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                return NotFound();
+                return RedirectToAction("Privacy", "Home");
             }
             else
             {
-                var mem = memRepository.GetMemberByID(id.Value);
-                if (mem == null)
+                if (id == null)
                 {
                     return NotFound();
                 }
-                return View(mem);
+                else
+                {
+                    var mem = memRepository.GetMemberByID(id.Value);
+                    if (mem == null)
+                    {
+                        return NotFound();
+                    }
+                    return View(mem);
+                }
+            }
+        }
+
+        public ActionResult CustomerDetails(int? id) // from here to OrderDetailsController
+        {
+            if (HttpContext.Session.GetString("user") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
+            else
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    var mem = memRepository.GetMemberByID(id.Value);
+                    if (mem == null)
+                    {
+                        return NotFound();
+                    }
+                    return View(mem);
+                }
             }
         }
 
         // GET: MembersController/Create
         public ActionResult Create()
         {
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
             return View();
         }
 
@@ -49,6 +87,10 @@ namespace eStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Member mem)
         {
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
             try
             {
                 if (ModelState.IsValid)
@@ -67,18 +109,25 @@ namespace eStore.Controllers
         // GET: MembersController/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (id == null)
+            if (HttpContext.Session.GetString("admin") == null && HttpContext.Session.GetString("user") == null)
             {
-                return NotFound();
+                return RedirectToAction("Privacy", "Home");
             }
             else
             {
-                var mem = memRepository.GetMemberByID(id.Value);
-                if (mem == null)
+                if (id == null)
                 {
                     return NotFound();
                 }
-                return View(mem);
+                else
+                {
+                    var mem = memRepository.GetMemberByID(id.Value);
+                    if (mem == null)
+                    {
+                        return NotFound();
+                    }
+                    return View(mem);
+                }
             }
         }
 
@@ -87,28 +136,40 @@ namespace eStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Member mem)
         {
-            try
+            if (HttpContext.Session.GetString("admin") == null && HttpContext.Session.GetString("user") == null)
             {
-                if (id != mem.MemberId)
-                {
-                    return NotFound();
-                }
-                if (ModelState.IsValid)
-                {
-                    memRepository.UpdateMember(mem);
-                }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Privacy", "Home");
             }
-            catch (Exception ex)
+            else
             {
-                ViewBag.Message = ex.Message;
-                return View();
+                try
+                {
+                    if (id != mem.MemberId)
+                    {
+                        return NotFound();
+                    }
+                    if (ModelState.IsValid)
+                    {
+                        memRepository.UpdateMember(mem);
+                        ViewBag.Message = "Updating successfully!";
+                    }
+                    return View("CustomerDetails", mem);
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = ex.Message;
+                    return RedirectToAction("Privacy", "Home");
+                }
             }
         }
 
         // GET: MembersController/Delete/5
         public ActionResult Delete(int? id)
         {
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
             if (id == null)
             {
                 return NotFound();
@@ -126,6 +187,10 @@ namespace eStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
             try
             {
                 memRepository.GetMemberByID(id);

@@ -119,7 +119,6 @@ namespace DataAccess
                 {
                     throw new Exception("This member does not already exist");
                 }
-
             }
             catch (Exception ex)
             {

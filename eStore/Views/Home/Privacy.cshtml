@@ -1,8 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Error page";
 }
 <div class="text-center">
-    <h1>@ViewData["Title"]</h1>
-    <p>Use this page to detail your site's privacy policy.</p>
+    <h1 class="text-danger">Error message</h1>
+    <p class="text-danger">You must to login before see information in system!</p>
+    @ViewBag.Message
+    <a asp-action="Index" asp-controller="Home">Back to login</a>
 </div>
 

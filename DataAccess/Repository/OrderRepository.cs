@@ -17,5 +17,12 @@ namespace DataAccess
         public void InsertOrder(Order o) => OrderDAO.Instance.AddNew(o);
 
         public void UpdateOrder(Order o) => OrderDAO.Instance.Update(o);
+        public decimal? GetTotalMoney(List<Order> list) => OrderDAO.Instance.GetTotalMoney(list);
+        public IEnumerable<Order> GetStatistic(int start, int end) => OrderDAO.Instance.GetStatistic(start, end);
+        public IEnumerable<Order> SortAsc() => OrderDAO.Instance.SortAsc();
+        public IEnumerable<Order> SortDesc() => OrderDAO.Instance.SortDesc();
+        public decimal GetTotalByMemberId(int id) => OrderDAO.Instance.GetTotalByMemberId(id);
+
+
     }
 }

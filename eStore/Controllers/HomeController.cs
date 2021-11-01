@@ -1,20 +1,19 @@
-﻿using eStore.Models;
+﻿using DataAccess;
+using eStore.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace eStore.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
+        private IMemberRepository memRepository = new MemberRepository();
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -32,8 +31,7 @@ namespace eStore.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-        bool CheckLogin(AdminAccount admin)
+        bool CheckLoginAdmin(string username, string password)
         {
             bool check = false;
             try
@@ -45,7 +43,7 @@ namespace eStore.Controllers
                 StreamReader r = new StreamReader("accountAdmin.json");
                 var json = r.ReadToEnd();
                 account = JsonConvert.DeserializeObject<AdminAccount>(json);
-                if (admin.Username.Equals(account.Username) && admin.Password.Equals(account.Password))
+                if (username.Equals(account.Username) && password.Equals(account.Password))
                 {
                     check = true;
                 }
@@ -55,23 +53,38 @@ namespace eStore.Controllers
             }
             return check;
         }
-        public ActionResult Login(AdminAccount admin)
+        int CheckLoginUser(string username, string password)
         {
-            _logger.LogInformation("Hello Admin");
+            int id = 0;
+            foreach (var mem in memRepository.GetMembers())
+            {
+                if (mem.Email.Equals(username) && mem.Password.Equals(password))
+                {
+                    id = mem.MemberId;
+                }
+            }
+            return id;
+        }
+        public ActionResult Login(string username, string password)
+        {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _logger.LogInformation("Can you run to here");
-                    if (CheckLogin(admin))
+                    if (CheckLoginAdmin(username, password))
                     {
-                        Session["admin"] = admin;
-                        return RedirectToAction(nameof(Index));
+                        HttpContext.Session.SetString("admin", username);
+                        return RedirectToAction("Index", "Members");
+                    }
+                    else if (CheckLoginUser(username, password) != 0)
+                    {
+                        HttpContext.Session.SetString("user", username);
+                        return RedirectToAction("CustomerDetails", "Members", new { id = CheckLoginUser(username, password) });
                     }
                     else
                     {
-                        ViewBag.Message = "Your username or password is not correct! Please, try again!";
-                        return View("Index");
+                        ViewBag.Message = "Sorry, your username or password is not correct! Please, try again!";
+                        return View("Index", new AdminAccount(username, password));
                     }
                 }
                 else
@@ -81,12 +94,23 @@ namespace eStore.Controllers
             }
             catch (Exception ex)
             {
-
+                ViewBag.Message = "Error at login: " + ex.Message;
+                return RedirectToAction("Privacy", "Home");
             }
-            return View();
         }
-
-
+        public ActionResult Logout()
+        {
+            try
+            {
+                HttpContext.Session.Remove("admin");
+                HttpContext.Session.Remove("user");
+                HttpContext.Session.Clear();
+            }
+            catch (Exception ex)
+            {
+            }
+            return RedirectToAction("Index", "Home");
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

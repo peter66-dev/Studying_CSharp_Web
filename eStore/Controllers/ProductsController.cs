@@ -16,32 +16,53 @@ namespace eStore.Controllers
         // GET: ProductsController
         public ActionResult Index()
         {
-            var proList = proRepository.GetProducts();
-            return View(proList);
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
+            else
+            {
+                var proList = proRepository.GetProducts();
+                return View(proList);
+            }
         }
 
         // GET: ProductsController/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null)
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                return NotFound();
+                return RedirectToAction("Privacy", "Home");
             }
             else
             {
-                var pro = proRepository.GetProductByID(id.Value);
-                if (pro == null)
+                if (id == null)
                 {
                     return NotFound();
                 }
-                return View(pro);
+                else
+                {
+                    var pro = proRepository.GetProductByID(id.Value);
+                    if (pro == null)
+                    {
+                        return NotFound();
+                    }
+                    return View(pro);
+                }
             }
         }
 
         // GET: ProductsController/Create
         public ActionResult Create()
         {
-            return View();
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
+            else
+            {
+                return View();
+            }
         }
 
         // POST: ProductsController/Create
@@ -49,36 +70,50 @@ namespace eStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Product pro)
         {
-            try
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                if (ModelState.IsValid)
-                {
-                    proRepository.InsertProduct(pro);
-                }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Privacy", "Home");
             }
-            catch (Exception ex)
+            else
             {
-                ViewBag.Message = ex.Message;
-                return View(pro);
+                try
+                {
+                    if (ModelState.IsValid)
+                    {
+                        proRepository.InsertProduct(pro);
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = ex.Message;
+                    return View(pro);
+                }
             }
         }
 
         // GET: ProductsController/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (id == null)
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                return NotFound();
+                return RedirectToAction("Privacy", "Home");
             }
             else
             {
-                var pro = proRepository.GetProductByID(id.Value);
-                if (pro == null)
+                if (id == null)
                 {
                     return NotFound();
                 }
-                return View(pro);
+                else
+                {
+                    var pro = proRepository.GetProductByID(id.Value);
+                    if (pro == null)
+                    {
+                        return NotFound();
+                    }
+                    return View(pro);
+                }
             }
         }
 
@@ -87,38 +122,52 @@ namespace eStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Product pro)
         {
-            try
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                if (id != pro.ProductId)
-                {
-                    return NotFound();
-                }
-                if (ModelState.IsValid)
-                {
-                    proRepository.UpdateProduct(pro);
-                }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Privacy", "Home");
             }
-            catch (Exception ex)
+            else
             {
-                ViewBag.Message = ex.Message;
-                return View();
+                try
+                {
+                    if (id != pro.ProductId)
+                    {
+                        return NotFound();
+                    }
+                    if (ModelState.IsValid)
+                    {
+                        proRepository.UpdateProduct(pro);
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = ex.Message;
+                    return View();
+                }
             }
         }
 
         // GET: ProductsController/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (id == null)
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                return NotFound();
+                return RedirectToAction("Privacy", "Home");
             }
-            var pro = proRepository.GetProductByID(id.Value);
-            if (pro == null)
+            else
             {
-                return NotFound();
+                if (id == null)
+                {
+                    return NotFound();
+                }
+                var pro = proRepository.GetProductByID(id.Value);
+                if (pro == null)
+                {
+                    return NotFound();
+                }
+                return View(pro);
             }
-            return View(pro);
         }
 
         // POST: ProductsController/Delete/5
@@ -126,15 +175,83 @@ namespace eStore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
-            try
+            if (HttpContext.Session.GetString("admin") == null)
             {
-                proRepository.GetProductByID(id);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Privacy", "Home");
             }
-            catch (Exception ex)
+            else
             {
-                ViewBag.Message = ex.Message;
-                return View();
+                try
+                {
+                    proRepository.GetProductByID(id);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = ex.Message;
+                    return View();
+                }
+            }
+        }
+
+        public ActionResult Sortasc()// chưa có view của Sortasc
+        {
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
+            else
+            {
+                var proList = proRepository.Sortasc();
+                return View(nameof(Index), proList);
+            }
+        }
+
+        public ActionResult Sortdesc() // chưa có view của Sortdesc
+        {
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
+            else
+            {
+                var proList = proRepository.Sortdesc();
+                return View(nameof(Index), proList);
+            }
+        }
+
+        public ActionResult Search(string valueInput) // chưa có view của Sortdesc
+        {
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
+            else
+            {
+                var proList = proRepository.GetProductByName(valueInput);
+                if (proList.Count == 0)
+                {
+                    ViewBag.Message = "Sorry, we can't find any this product name in system";
+                }
+                return View(nameof(Index), proList);
+            }
+        }
+
+        public ActionResult FindPrice() // chưa có view của Sortdesc
+        {
+            if (HttpContext.Session.GetString("admin") == null)
+            {
+                return RedirectToAction("Privacy", "Home");
+            }
+            else
+            {
+                int valuePrice = int.Parse(HttpContext.Request.Form["valuePrice"]);
+                var proList = proRepository.GetProductByPrice(valuePrice);//1, 2, 3, 4
+                if (proList.Count == 0)
+                {
+                    ViewBag.Message = "Sorry, we can't find any this product name in system";
+                }
+                return View(nameof(Index), proList);
             }
         }
     }

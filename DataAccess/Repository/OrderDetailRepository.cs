@@ -12,6 +12,8 @@ namespace DataAccess
 
         public OrderDetail GetOrderDetailByID(int id, int proID) => OrderDetailDAO.Instance.GetOrderDetailByID(id, proID);
 
+        public List<OrderDetail> GetOrderDetailByMemberID(int memID) => OrderDetailDAO.Instance.GetOrderDetailByMemberID(memID);
+
         public IEnumerable<OrderDetail> GetOrderDetails() => OrderDetailDAO.Instance.GetOrderDetails();
 
         public void InsertOrderDetail(OrderDetail o) => OrderDetailDAO.Instance.AddNew(o);
